@@ -1,0 +1,17 @@
+node_modules/
+
+# Playwright / Allure output
+allure-results/
+reports/
+test-results/
+playwright-report/
+blob-report/
+.claude/
+.playwright-cli/
+
+# env
+.env
+
+
+# misc
+*.log
