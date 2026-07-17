@@ -1,7 +1,7 @@
 import { test as base, request as playwrightRequest, APIRequestContext } from '@playwright/test';
 import { TokenManager } from '../api/core/token.manager';
 import { UserApiService } from '../api/services/user.api.service';
-import { envConfig } from '../config/env.config';
+import { saucedemoConfig } from '../app.config';
 
 interface ApiFixtures {
   apiRequestContext: APIRequestContext;
@@ -20,8 +20,8 @@ export const test = base.extend<ApiFixtures>({
   // eslint-disable-next-line no-empty-pattern -- Playwright requires a destructuring pattern here, even with no fixture deps
   apiRequestContext: async ({}, use) => {
     const context = await playwrightRequest.newContext({
-      baseURL: envConfig.apiBaseUrl,
-      timeout: envConfig.apiRequestTimeout,
+      baseURL: saucedemoConfig.apiBaseUrl,
+      timeout: saucedemoConfig.apiRequestTimeout,
       extraHTTPHeaders: { Accept: 'application/json' },
     });
     await use(context);

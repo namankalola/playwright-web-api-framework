@@ -1,6 +1,6 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { Logger } from './logger';
-import { envConfig } from '../config/env.config';
+import { envConfig } from './env.config';
 
 /**
  * WebActions is the single place that talks to raw Playwright APIs.
@@ -130,6 +130,14 @@ export class WebActions {
     return this.safeExec(`Get attribute "${attribute}" of "${name}"`, async () => locator.getAttribute(attribute));
   }
 
+  /** Reads an input/textarea's live DOM value - unlike getAttribute, this reflects framework-set values that never get mirrored back onto the HTML attribute (e.g. disabled fields populated via a JS framework). */
+  async getValue(locator: Locator, name = 'field'): Promise<string> {
+    return this.safeExec(`Get value of "${name}"`, async () => {
+      await locator.waitFor({ state: 'visible', timeout: envConfig.defaultTimeout });
+      return locator.inputValue();
+    });
+  }
+
   async isVisible(locator: Locator): Promise<boolean> {
     return locator.isVisible();
   }
@@ -154,6 +162,13 @@ export class WebActions {
   async waitForHidden(locator: Locator, name = 'element', timeout = envConfig.defaultTimeout): Promise<void> {
     await this.safeExec(`Wait for "${name}" to be hidden`, async () => {
       await locator.waitFor({ state: 'hidden', timeout });
+    });
+  }
+
+  /** Waits for presence in the DOM regardless of visibility - for elements a responsive layout renders but keeps visually collapsed (e.g. a filter panel hidden behind a toggle on narrow viewports), where waiting on 'visible' would never resolve until after the toggle is clicked. */
+  async waitForAttached(locator: Locator, name = 'element', timeout = envConfig.defaultTimeout): Promise<void> {
+    await this.safeExec(`Wait for "${name}" to be attached`, async () => {
+      await locator.waitFor({ state: 'attached', timeout });
     });
   }
 
@@ -187,6 +202,15 @@ export class WebActions {
   async assertUrlContains(fragment: string): Promise<void> {
     await this.safeExec(`Assert URL contains "${fragment}"`, async () => {
       await expect(this.page, `URL should contain ${fragment}`).toHaveURL(new RegExp(fragment));
+    });
+  }
+
+  /** Polls until the field's live value is non-empty - needed after an SPA route change where the element renders before its data finishes loading. */
+  async assertValueNotEmpty(locator: Locator, name = 'field'): Promise<void> {
+    await this.safeExec(`Assert "${name}" value is not empty`, async () => {
+      await expect(locator, `${name} should have a non-empty value`).not.toHaveValue('', {
+        timeout: envConfig.defaultTimeout,
+      });
     });
   }
 

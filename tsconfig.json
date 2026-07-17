@@ -19,11 +19,7 @@
 
     "paths": {
       "@core/*": ["./src/core/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@config/*": ["./src/config/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@fixtures/*": ["./src/fixtures/*"],
-      "@data/*": ["./src/data/*"]
+      "@apps/*": ["./src/apps/*"]
     },
 
     "noUnusedLocals": true,
@@ -34,8 +30,7 @@
 
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts",
-    "playwright.config.ts"
+    "playwright.*.config.ts"
   ],
 
   "exclude": [

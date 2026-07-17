@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
-import { ApiClient, ApiResult } from '../core/api.client';
-import { SpecBuilder } from '../core/spec.builder';
+import { ApiClient, ApiResult } from '../../../../core/api.client';
+import { SpecBuilder } from '../../../../core/spec.builder';
 import { TokenManager } from '../core/token.manager';
 import { ApiRoutes } from '../routes/api.routes';
 import {

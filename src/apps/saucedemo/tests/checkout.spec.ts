@@ -1,9 +1,9 @@
-import { test, expect } from '../src/fixtures/pages.fixture';
-import { ExcelReader } from '../src/utils/excel.reader';
-import { envConfig } from '../src/config/env.config';
+import { test, expect } from '../fixtures/pages.fixture';
+import { ExcelReader } from '../../../core/excel.reader';
+import { saucedemoConfig } from '../app.config';
 
 test.beforeAll(async () => {
-  await ExcelReader.loadWorkbook(envConfig.testDataFile);
+  await ExcelReader.loadWorkbook(saucedemoConfig.testDataFile);
 
 });
 
@@ -24,11 +24,11 @@ test.describe('SCRUM-1 / SCRUM-2 / SCRUM-5 / SCRUM-6 - Checkout mandatory field 
       inventoryPage,
       checkoutPage,
     }) => {
-      const row = await ExcelReader.getTestDataRow(envConfig.testDataFile, 'CheckoutData', scenario.testCaseId);
+      const row = await ExcelReader.getTestDataRow(saucedemoConfig.testDataFile, 'CheckoutData', scenario.testCaseId);
 
       await test.step('Login using valid credentials', async () => {
         await loginPage.open();
-        await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+        await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
       });
 
       await test.step('Add any product to cart', async () => {
@@ -72,11 +72,11 @@ test.describe('SCRUM-1 / SCRUM-2 / SCRUM-5 / SCRUM-6 - Checkout mandatory field 
     inventoryPage,
     checkoutPage,
   }) => {
-    const row = await ExcelReader.getTestDataRow(envConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_06');
+    const row = await ExcelReader.getTestDataRow(saucedemoConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_06');
 
     await test.step('Login using valid credentials', async () => {
       await loginPage.open();
-      await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+      await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
     });
 
     await test.step('Add any product to cart', async () => {
@@ -114,7 +114,7 @@ test.describe('@regression SCRUM-8 Add all products to cart and checkout', () =>
   test.beforeEach(async ({ loginPage }) => {
     await test.step('Login to Swag Labs', async () => {
       await loginPage.open();
-      await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+      await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
     });
   });
 
@@ -123,7 +123,7 @@ test.describe('@regression SCRUM-8 Add all products to cart and checkout', () =>
     cartPage,
     checkoutPage,
   }) => {
-    const customer = await ExcelReader.getTestDataRow(envConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_01');
+    const customer = await ExcelReader.getTestDataRow(saucedemoConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_01');
 
     let productNames: string[] = [];
     await test.step('Click on Add to cart for all products', async () => {
@@ -158,7 +158,7 @@ test.describe('@regression SCRUM-8 Add all products to cart and checkout', () =>
 test.describe('@regression Checkout flow', () => {
   test.beforeEach(async ({ loginPage }) => {
     await loginPage.open();
-    await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+    await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
   });
 
   test('@smoke completes checkout for a single product', async ({ inventoryPage, checkoutPage }) => {
@@ -188,7 +188,7 @@ test.describe('@regression Checkout flow', () => {
 
 
     for (const scenario of scenarios) {
-      const row = await ExcelReader.getTestDataRow(envConfig.testDataFile, 'CheckoutData', scenario.testCaseId);
+      const row = await ExcelReader.getTestDataRow(saucedemoConfig.testDataFile, 'CheckoutData', scenario.testCaseId);
       await test.step(`${row.get('testCaseId')}: checkout for ${row.get('firstName')} ${row.get('lastName')}`, async () => {
         await test.step('Add product to cart' + 'Sauce Labs Backpack', async () => {
           await inventoryPage.addProductToCart('Sauce Labs Backpack');
@@ -214,12 +214,12 @@ test.describe('@regression SCRUM-7 Apply sorting on Products page', () => {
   let sortingRows = new Array<Map<string, string>>();
 
   test.beforeAll(async () => {
-    sortingRows = await ExcelReader.getAllRowsFromSheet(envConfig.testDataFile, 'SortingData');
+    sortingRows = await ExcelReader.getAllRowsFromSheet(saucedemoConfig.testDataFile, 'SortingData');
   });
 
   test.beforeEach(async ({ loginPage }) => {
     await loginPage.open();
-    await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+    await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
   });
 
   test('@smoke sorts products by name and price in all directions', async ({ inventoryPage }) => {

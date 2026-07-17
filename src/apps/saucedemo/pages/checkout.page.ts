@@ -1,5 +1,5 @@
 import { Locator, Page } from '@playwright/test';
-import { BasePage } from '../core/base.page';
+import { BasePage } from '../../../core/base.page';
 
 export class CheckoutPage extends BasePage {
   private readonly checkoutButton = this.page.locator('#checkout');

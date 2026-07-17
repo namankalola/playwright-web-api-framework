@@ -1,28 +1,27 @@
-import { test, expect } from '../src/fixtures/pages.fixture';
-import { ExcelReader } from '../src/utils/excel.reader';
-import { envConfig } from '../src/config/env.config';
-// import { LoginTestData } from '../src/utils/types';
+import { test, expect } from '../fixtures/pages.fixture';
+import { ExcelReader } from '../../../core/excel.reader';
+import { saucedemoConfig } from '../app.config';
 
 test.beforeAll(async () => {
-  await ExcelReader.loadWorkbook(envConfig.testDataFile);
+  await ExcelReader.loadWorkbook(saucedemoConfig.testDataFile);
 });
 
 test.describe('@smoke @regression Login', () => {
   let loginRows = new Array<Map<string, string>>();
 
   test.beforeAll(async () => {
-    loginRows = await ExcelReader.getAllRowsFromSheet(envConfig.testDataFile, 'LoginData');
+    loginRows = await ExcelReader.getAllRowsFromSheet(saucedemoConfig.testDataFile, 'LoginData');
   });
 
   test('@smoke logs in successfully with valid credentials', async ({ loginPage, inventoryPage }) => {
     await loginPage.open();
-    await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+    await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
     await inventoryPage.assertLoaded();
   });
 
   test('shows an error for a locked-out user', async ({ loginPage }) => {
     await loginPage.open();
-    await loginPage.login('locked_out_user', envConfig.defaultPassword);
+    await loginPage.login('locked_out_user', saucedemoConfig.defaultPassword);
     await loginPage.assertErrorVisible();
     expect(await loginPage.getErrorMessage()).toContain('locked out');
   });

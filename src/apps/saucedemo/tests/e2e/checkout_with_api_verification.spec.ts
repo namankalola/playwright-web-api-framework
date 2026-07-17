@@ -1,9 +1,9 @@
-import { test, expect } from '../../src/fixtures/e2e.fixture';
-import { ExcelReader } from '../../src/utils/excel.reader';
-import { envConfig } from '../../src/config/env.config';
+import { test, expect } from '../../fixtures/e2e.fixture';
+import { ExcelReader } from '../../../../core/excel.reader';
+import { saucedemoConfig } from '../../app.config';
 
 test.beforeAll(async () => {
-  await ExcelReader.loadWorkbook(envConfig.testDataFile);
+  await ExcelReader.loadWorkbook(saucedemoConfig.testDataFile);
 });
 
 test.afterAll(async () => {
@@ -24,12 +24,12 @@ test.describe('@e2e @regression Checkout flow with API-side customer record veri
     checkoutPage,
     userApiService,
   }) => {
-    const customer = await ExcelReader.getTestDataRow(envConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_01');
+    const customer = await ExcelReader.getTestDataRow(saucedemoConfig.testDataFile, 'CheckoutData', 'TC_CHECKOUT_01');
     const fullName = `${customer.get('firstName') ?? ''} ${customer.get('lastName') ?? ''}`;
 
     await test.step('Login to Swag Labs', async () => {
       await loginPage.open();
-      await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+      await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
     });
 
     await test.step('Add product to cart', async () => {

@@ -1,18 +1,18 @@
-import { test, expect } from '../src/fixtures/pages.fixture';
-// import { ExcelReader } from '../src/utils/excel.reader';
-import { envConfig } from '../src/config/env.config';
+import { test, expect } from '../fixtures/pages.fixture';
+// import { ExcelReader } from '../../../core/excel.reader';
+import { saucedemoConfig } from '../app.config';
 
 test.describe('SCRUM-1 - Verify First Name is Mandatory', () => {
     test.beforeEach(async ({ loginPage }) => {
       await loginPage.open();
-      await loginPage.login(envConfig.defaultUsername, envConfig.defaultPassword);
+      await loginPage.login(saucedemoConfig.defaultUsername, saucedemoConfig.defaultPassword);
     });
 
   test.skip('TC_001 - First Name is required on checkout', async ({ page }) => {
     await test.step('Login using valid credentials', async () => {
-      await page.goto(envConfig.baseUrl);
-      await page.getByPlaceholder('Username').fill(envConfig.defaultUsername);
-      await page.getByPlaceholder('Password').fill(envConfig.defaultPassword);
+      await page.goto(saucedemoConfig.baseUrl);
+      await page.getByPlaceholder('Username').fill(saucedemoConfig.defaultUsername);
+      await page.getByPlaceholder('Password').fill(saucedemoConfig.defaultPassword);
       await page.getByRole('button', { name: 'Login' }).click();
       await page.waitForURL('**/inventory.html');
     });

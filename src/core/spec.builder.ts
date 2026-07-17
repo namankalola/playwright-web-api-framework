@@ -1,10 +1,12 @@
-import { envConfig } from '../../config/env.config';
-
 /**
  * Fluent request-spec builder, the TS analogue of RestAssured's
  * `given().header(...).queryParam(...).body(...)`.
  * Produces a plain RequestSpec object that ApiClient knows how to execute -
  * the builder itself has zero HTTP-execution logic.
+ *
+ * Deliberately app-agnostic: it carries no default headers beyond
+ * Content-Type. App-specific auth headers (e.g. an account-level API key)
+ * are attached by the caller via `.withHeader(...)`, not baked in here.
  */
 export interface RequestSpec {
   headers: Record<string, string>;
@@ -15,9 +17,6 @@ export interface RequestSpec {
 export class SpecBuilder {
   private headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    // Account-level key required by reqres.in (and typical of real APIs) on every /api/* call.
-    // Every spec gets this by default so services never have to remember to attach it.
-    ...(envConfig.apiKey ? { 'x-api-key': envConfig.apiKey } : {}),
   };
   private params: Record<string, string | number | boolean> = {};
   private body: unknown;

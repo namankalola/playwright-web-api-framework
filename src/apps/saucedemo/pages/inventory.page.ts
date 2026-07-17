@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { BasePage } from '../core/base.page';
+import { BasePage } from '../../../core/base.page';
 
 export class InventoryPage extends BasePage {
   private readonly pageTitleLabel = this.page.locator('.title');

@@ -1,5 +1,5 @@
 import Exceljs from 'exceljs';
-import { Logger } from '../core/logger';
+import { Logger } from './logger';
 
 export class ExcelReader {
   private static workbookData = new Map<string, Record<string, string>[]>();
@@ -68,9 +68,10 @@ export class ExcelReader {
   }
 
   static async loadWorkbook(filePath: string): Promise<void> {
-    if (this.workbookData.size > 0) {
+    if (this.workbookData.size > 0 && this.loadedFile === filePath) {
       return;
     }
+    this.workbookData.clear();
     const workbook = await this.ensureWorkbook(filePath);
     workbook.eachSheet(sheet => {
       this.workbookData.set(
@@ -111,7 +112,7 @@ export class ExcelReader {
   }
 
   static async getAllRowsFromSheet(filePath: string, sheetName: string): Promise<Array<Map<string, string>>> {
-    if (this.workbookData.size === 0) {
+    if (this.workbookData.size === 0 || this.loadedFile !== filePath) {
       await this.loadWorkbook(filePath);
     }
     const sheet = this.getSheet(sheetName);

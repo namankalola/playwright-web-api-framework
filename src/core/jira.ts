@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { Logger } from '../core/logger';
+import { Logger } from './logger';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 

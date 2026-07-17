@@ -1,6 +1,6 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { RequestSpec } from './spec.builder';
-import { Logger } from '../../core/logger';
+import { Logger } from './logger';
 
 /**
  * ApiClient is the API-layer equivalent of WebActions: the ONLY class that

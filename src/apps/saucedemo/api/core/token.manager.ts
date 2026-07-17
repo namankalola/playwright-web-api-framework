@@ -1,9 +1,9 @@
 import { APIRequestContext } from '@playwright/test';
 import { ApiRoutes } from '../routes/api.routes';
 import { LoginRequest, LoginResponse } from '../models/user.model';
-import { Logger } from '../../core/logger';
-import { envConfig } from '../../config/env.config';
-import { SpecBuilder } from './spec.builder';
+import { Logger } from '../../../../core/logger';
+import { SpecBuilder } from '../../../../core/spec.builder';
+import { saucedemoConfig } from '../../app.config';
 
 /**
  * Owns the full lifecycle of auth tokens: fetch, cache, expiry, refresh.
@@ -45,8 +45,8 @@ export class TokenManager {
 
   private async fetchNewToken(): Promise<string> {
     const credentials: LoginRequest = {
-      email: envConfig.apiAuthEmail,
-      password: envConfig.apiAuthPassword,
+      email: saucedemoConfig.apiAuthEmail,
+      password: saucedemoConfig.apiAuthPassword,
     };
 
     const spec = SpecBuilder.create().withBody(credentials).build();
