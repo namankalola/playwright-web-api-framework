@@ -22,6 +22,11 @@ test.describe('Claim Submission', () => {
       await claimPage.open();
     });
 
+    await test.step('Validate the list of mandatory fields before filling them', async () => {
+      const mandatoryFields = await claimPage.getMandatoryFieldLabels();
+      expect(mandatoryFields).toEqual(['Event', 'Currency']);
+    });
+
     await test.step('Fill only the mandatory fields (Event, Currency) and leave Remarks blank', async () => {
       await claimPage.createClaim(row.get('event') ?? '', row.get('currency') ?? '', row.get('remarks') ?? '');
     });

@@ -7,6 +7,7 @@ export class ClaimPage extends BasePage {
   private readonly remarksInput = this.page.locator('textarea');
   private readonly createButton = this.page.getByRole('button', { name: 'Create' });
   private readonly validationMessages = this.page.locator('.oxd-input-group__message');
+  private readonly requiredFieldLabels = this.page.locator('.oxd-label.oxd-input-field-required');
 
   private readonly referenceIdField = this.page
     .locator('.oxd-input-group', { hasText: 'Reference Id' })
@@ -63,6 +64,12 @@ export class ClaimPage extends BasePage {
 
   async getValidationMessages(): Promise<string[]> {
     return this.actions.getAllTexts(this.validationMessages, 'Create Claim validation messages');
+  }
+
+  /** Field labels carrying the `oxd-input-field-required` class, in form order - the mandatory-field list shown before any values are filled. Waits for the first label since the form renders asynchronously right after navigation (SPA route change, same as the login race documented on LoginPage). */
+  async getMandatoryFieldLabels(): Promise<string[]> {
+    await this.actions.waitForVisible(this.requiredFieldLabels.first(), 'Mandatory field labels');
+    return this.actions.getAllTexts(this.requiredFieldLabels, 'Mandatory field labels');
   }
 
   async getReferenceId(): Promise<string> {

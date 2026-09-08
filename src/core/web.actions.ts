@@ -150,6 +150,11 @@ export class WebActions {
     return locator.count();
   }
 
+  /** Reads the element's rendered box - unlike `isVisible`, this reflects layout state (e.g. a responsive panel collapsed to zero width via CSS rather than hidden outright), which `isVisible` can't distinguish from a normally rendered element. */
+  async getBoundingBox(locator: Locator, name = 'element'): Promise<{ x: number; y: number; width: number; height: number } | null> {
+    return this.safeExec(`Get bounding box of "${name}"`, async () => locator.boundingBox());
+  }
+
   // ---------------------------------------------------------------------
   // Waits
   // ---------------------------------------------------------------------
@@ -202,6 +207,26 @@ export class WebActions {
   async assertUrlContains(fragment: string): Promise<void> {
     await this.safeExec(`Assert URL contains "${fragment}"`, async () => {
       await expect(this.page, `URL should contain ${fragment}`).toHaveURL(new RegExp(fragment));
+    });
+  }
+
+  /**
+   * Clicks `locator` while capturing the network response matching `urlPattern` -
+   * for flows whose client-side redirect/popup is unreliable (e.g. blocked by a
+   * third-party script error) but whose underlying API call is the true source
+   * of truth. Returns the response status and parsed JSON body (null if the
+   * body isn't JSON) instead of depending on any UI state change.
+   */
+  async clickAndCaptureResponse(
+    locator: Locator,
+    urlPattern: string | RegExp,
+    name = 'element',
+    timeout = envConfig.defaultTimeout,
+  ): Promise<{ status: number; body: unknown }> {
+    return this.safeExec(`Click "${name}" and capture response matching ${urlPattern}`, async () => {
+      const [response] = await Promise.all([this.page.waitForResponse(urlPattern, { timeout }), locator.click()]);
+      const body = await response.json().catch(() => null);
+      return { status: response.status(), body };
     });
   }
 

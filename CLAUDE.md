@@ -23,6 +23,7 @@ infer it from the Jira key prefix. Resolve `<app>` to its row below and read tha
 |---|---|
 | saucedemo | `@src/apps/saucedemo/CLAUDE.md` |
 | orangehrms | `@src/apps/orangehrms/CLAUDE.md` |
+| bookstore | `@src/apps/bookstore/CLAUDE.md` |
 
 ## Workflow for each task
 
@@ -48,18 +49,83 @@ infer it from the Jira key prefix. Resolve `<app>` to its row below and read tha
     it passes.
 12. Run `npm run typecheck` and `npm run lint` — both must be clean (repo-wide; these are not
     app-scoped).
-13. If everything passes, append a note:
+13. If everything passes, append a note plus the auto-generated Implemented Steps block (see
+    "Implemented Steps tracking" below) to the Jira task description:
 
     ```
     🤖 Automation test created: <filename>, Automated by: Namankumar Kalola
 
+    --- Implemented Steps (auto-generated, do not edit) ---
+    Test: <full test title string, e.g. "@smoke @regression HRMS-2 creates a claim with only mandatory fields (Event, Currency)">
+    1. <first test.step() label>
+    2. <second test.step() label>
+    ...
     ```
-
-    to the Jira task description.
 14. Move the task to **"Done"**.
 
 If a test fails, or `typecheck`/`lint` fails, analyze and fix it — do not move the task to
 Done or touch Jira until it's green.
+
+---
+
+## Workflow for enhancing an existing test case
+
+Use this instead of "Workflow for each task" when the request is to redevelop, extend, or fix
+an already-generated spec rather than create a new one. Triggered by naming the target spec
+file explicitly — never guessed or inferred from the ticket.
+
+1. Resolve `<app>` from the request and read `src/apps/<app>/CLAUDE.md`, same as pickup.
+2. Fetch `<TASK-KEY>` via `src/core/jira.ts`. Read the description — understand exactly what
+   is being added, changed, or fixed in the existing flow.
+3. Look for a `--- Implemented Steps (auto-generated, do not edit) ---` block already in the
+   description (see "Implemented Steps tracking" below). If one exists, compare it line-by-line
+   against what the description now asks for and **report the comparison** — which previously
+   implemented steps are unchanged, which are being added, changed, or removed — before editing
+   anything. This scopes the edit to exactly what changed instead of re-deriving everything from
+   scratch. If no such block exists yet (e.g. the spec predates this convention), say so and fall
+   back to reading the spec directly.
+4. Move the task to **In Progress**.
+5. Locate `src/apps/<app>/tests/**/<spec-filename>` (the filename is always given explicitly
+   in the command — do not guess or infer it from the ticket). If it doesn't exist at that
+   path, stop and report back rather than creating a new file under a different location.
+6. Read the target spec in full, plus every page object method, fixture, and Excel
+   sheet/column it currently touches. Build a picture of existing coverage before editing
+   anything.
+7. Map the step-level diff from step 3 onto exactly one or more of:
+   - page object: extend an existing method / add a new locator or method (never fork a
+     near-duplicate of an existing one)
+   - test data: append row(s) or column(s) to the *existing* sheet that spec already reads
+     (new sheet only if the ticket introduces a genuinely new flow)
+   - spec: add/modify `test.step()`s and `expect()`s
+8. Re-verify every selector touched with Playwright-CLI against the live app — do not assume
+   locators written when the test was first created still hold.
+9. Apply the minimal edit satisfying the ticket. Preserve every existing `test.step()` and
+   assertion in the file unless the ticket explicitly says that behavior is being removed or
+   changed — an enhancement ticket should not silently drop coverage.
+10. Run only the modified spec:
+    `npx playwright test <path-to-spec> --config=playwright.<app>.config.ts`.
+11. Run `npm run typecheck` and `npm run lint` — both must be clean (repo-wide).
+12. If everything passes, append a note plus a freshly regenerated Implemented Steps block
+    (see below — never hand-edit the previous block, always regenerate it from the spec as it
+    now stands) to the Jira task description:
+
+    ```
+    🤖 Automation test updated: <filename>, Automated by: Namankumar Kalola
+
+    --- Implemented Steps (auto-generated, do not edit) ---
+    Test: <full test title string, e.g. "@smoke @regression HRMS-2 creates a claim with only mandatory fields (Event, Currency)">
+    1. <first test.step() label>
+    2. <second test.step() label>
+    ...
+    ```
+13. Move the task to **Done**.
+
+If the test fails, or `typecheck`/`lint` fails, analyze and fix it — do not move the task to
+Done or touch Jira until it's green.
+
+The same **Page Object Rules**, **Test Writing Rules**, **Test Data Rules**, and **self-check**
+below apply unchanged — this workflow edits an existing file under those same constraints
+instead of generating a new one.
 
 ---
 
@@ -205,6 +271,33 @@ exists; use `saucedemoConfig.testDataFile`). It's read through `ExcelReader`
 
 ---
 
+## Implemented Steps tracking
+
+Every completed pickup or redevelop appends an `--- Implemented Steps (auto-generated, do not
+edit) ---` block to the Jira description, directly under the `🤖 Automation test
+created/updated:` note. This is what lets the *next* redevelop of that ticket diff "what's
+already automated" against "what the ticket now asks for" without re-reading the spec cold.
+
+- **Always auto-extract, never hand-write.** The block is the ticket's test title (a `Test:`
+  line holding the full string passed to `test(...)`, including its `@tag`s and ticket key —
+  e.g. `'@smoke @regression HRMS-2 creates a claim with only mandatory fields (Event,
+  Currency)'`) followed by the ordered list of that same `test(...)` block's `test.step()`
+  label strings. The title line is what a future redevelop matches on to find the right test
+  in a multi-ticket spec file, and what makes the block self-describing if the test's title
+  itself changes. Never type either the title or the step list from memory or from the ticket
+  description; both must reflect the code exactly.
+- **Scoped to one ticket.** A spec file may hold multiple tickets' tests (e.g.
+  `claim_submission.spec.ts` holds HRMS-2 through HRMS-7). Each ticket's description only ever
+  gets its own test's steps, not the whole file's.
+- **Always regenerate, never patch.** After any redevelop, the old block is replaced start-to-
+  finish by a fresh extraction from the post-edit spec — don't try to surgically edit the old
+  block's lines.
+- **Consumed at the start of redevelop** (see step 3 of that workflow) — fetch the description,
+  find the most recent such block, and report the diff against the new requirement before
+  touching any files.
+
+---
+
 ## Jira Rules
 
 - Use the Jira project key from the resolved app's `CLAUDE.md`/`app.config.ts` — never
@@ -212,6 +305,8 @@ exists; use `saucedemoConfig.testDataFile`). It's read through `ExcelReader`
 - Always move to **In Progress** before starting work.
 - Always move to **Done** only after the test passes and `typecheck`/`lint` are clean.
 - Never overwrite existing description content — only append.
+- Every append that follows a completed pickup/redevelop includes the Implemented Steps block
+  described above, not just the automation note.
 
 ---
 
@@ -273,4 +368,13 @@ When I say:
 
 > **"pick up `<app>` `<TASK-KEY>`"** (e.g. "pick up saucedemo SCRUM-12")
 
-execute the full workflow above for that task, scoped to `<app>` unattended, i.e automated.
+execute the full "Workflow for each task" above for that task, scoped to `<app>` unattended,
+i.e automated.
+
+When I say:
+
+> **"redevelop `<app>` `<TASK-KEY>` `<spec-filename>`"**
+> (e.g. "redevelop saucedemo SCRUM-15 login.spec.ts")
+
+execute the full "Workflow for enhancing an existing test case" above for that task, scoped to
+`<app>` and `<spec-filename>`, unattended, i.e automated.
