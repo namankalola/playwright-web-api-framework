@@ -53,7 +53,7 @@ infer it from the Jira key prefix. Resolve `<app>` to its row below and read tha
     "Implemented Steps tracking" below) to the Jira task description:
 
     ```
-    🤖 Automation test created: <filename>, Automated by: Namankumar Kalola
+    🤖 Automation test created: <filename>, Automated by: Namankumar Kalola, Date : <Current Date and Time>
 
     --- Implemented Steps (auto-generated, do not edit) ---
     Test: <full test title string, e.g. "@smoke @regression HRMS-2 creates a claim with only mandatory fields (Event, Currency)">
@@ -110,7 +110,7 @@ file explicitly — never guessed or inferred from the ticket.
     now stands) to the Jira task description:
 
     ```
-    🤖 Automation test updated: <filename>, Automated by: Namankumar Kalola
+    🤖 Automation test updated: <filename>, Automated by: Namankumar Kalola, Date : <Current Date and Time>
 
     --- Implemented Steps (auto-generated, do not edit) ---
     Test: <full test title string, e.g. "@smoke @regression HRMS-2 creates a claim with only mandatory fields (Event, Currency)">
