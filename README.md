@@ -240,4 +240,4 @@ the AI workflow actually does. In short: everything is additive - a new self-con
 
   ## CI/CD
 
-Playwright regression tests run automatically on pull requests using GitHub Actions.
+Playwright regression tests run automatically on pull requests using GitHub Actions, it will use github hosted ubuntu runners for execution
