@@ -237,3 +237,6 @@ the AI workflow actually does. In short: everything is additive - a new self-con
   isolation across parallel workers; `ExcelReader` caches per file+sheet so parallel workers
   don't re-parse the workbook, and the cache is keyed by file path so two apps' data files
   never collide even if a future test process loads both.
+
+  ## CI/CD
+Playwright regression tests run automatically on pull requests using GitHub Actions.
