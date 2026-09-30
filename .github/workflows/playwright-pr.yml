@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   playwright:
-    name: SauceDemo Regression - Chromium
+    name: BookStore Regression - Chromium
     runs-on: ubuntu-latest
 
     timeout-minutes: 30
@@ -31,11 +31,8 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Generate SauceDemo test data
-        run: npm run generate:testdata:saucedemo
-
-      - name: Run SauceDemo regression
-        run: npm run test:saucedemo:chrome -- --grep @regression
+      - name: Run BookStore regression
+        run: npm run test:bookstore:chrome -- --grep @regression
         env:
           CI: true
 
@@ -43,10 +40,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-report
+          name: bookstore-playwright-report
           path: |
-            reports/saucedemo/html-report/
-            reports/saucedemo/junit-results.xml
-            reports/saucedemo/allure-results/
-            reports/saucedemo/test-results/
+            reports/bookstore/html-report/
+            reports/bookstore/junit-results.xml
+            reports/bookstore/allure-results/
+            reports/bookstore/test-results/
           retention-days: 14
