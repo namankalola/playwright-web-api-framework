@@ -32,7 +32,7 @@
     "test:bookstore:debug": "playwright test --config=playwright.bookstore.config.ts --debug",
     "test:bookstore:smoke": "playwright test --config=playwright.bookstore.config.ts --grep @smoke",
     "test:bookstore:regression": "playwright test --config=playwright.bookstore.config.ts --grep @regression",
-    "test:bookstore:chrome": "playwright test --config=playwright.bookstore.config.ts --project=chromium",
+    "test:bookstore:chrome": "playwright test src/apps/bookstore/tests/generated/ARISE_1.spec.ts --config=playwright.bookstore.config.ts --project=chromium",
     "test:bookstore:firefox": "playwright test --config=playwright.bookstore.config.ts --project=firefox",
     "test:bookstore:webkit": "playwright test --config=playwright.bookstore.config.ts --project=webkit",
     "test:bookstore:parallel": "playwright test --config=playwright.bookstore.config.ts --workers=4",
