@@ -43,6 +43,18 @@ export class ApiClient {
     );
   }
 
+  async head(path: string, spec: RequestSpec = { headers: {}, params: {} }): Promise<ApiResult> {
+    return this.execute('HEAD', path, spec, () =>
+      this.request.head(path, { headers: spec.headers, params: this.stringifyParams(spec.params) }),
+    );
+  }
+
+  async options(path: string, spec: RequestSpec = { headers: {}, params: {} }): Promise<ApiResult> {
+    return this.execute('OPTIONS', path, spec, () =>
+      this.request.fetch(path, { method: 'OPTIONS', headers: spec.headers, params: this.stringifyParams(spec.params) }),
+    );
+  }
+
   private async execute(
     method: string,
     path: string,
@@ -56,16 +68,17 @@ export class ApiClient {
       const response = await fn();
       const durationMs = Date.now() - start;
       Logger.info(`API ${method} ${path} -> ${response.status()} (${durationMs}ms)`);
-      return new ApiResult(response, await this.safeJson(response));
+      const text = await response.text();
+      return new ApiResult(response, this.safeJson(text), text);
     } catch (error) {
       Logger.error(`API ${method} ${path} failed`, error instanceof Error ? error.message : error);
       throw new Error(`[ApiClient] ${method} ${path} failed -> ${(error as Error).message}`);
     }
   }
 
-  private async safeJson(response: APIResponse): Promise<unknown> {
+  private safeJson(text: string): unknown {
     try {
-      return await response.json();
+      return JSON.parse(text);
     } catch {
       return undefined; // non-JSON or empty body (e.g. 204 No Content)
     }
@@ -84,10 +97,17 @@ export class ApiResult {
   constructor(
     public readonly response: APIResponse,
     public readonly body: unknown,
+    /** Raw response text - the only way to inspect non-JSON bodies (e.g. a plain-text 500). */
+    public readonly text: string = '',
   ) {}
 
   get status(): number {
     return this.response.status();
+  }
+
+  /** Response header value by name (case-insensitive), or undefined if absent. */
+  header(name: string): string | undefined {
+    return this.response.headers()[name.toLowerCase()];
   }
 
   get ok(): boolean {

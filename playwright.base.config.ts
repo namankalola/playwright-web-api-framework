@@ -5,6 +5,11 @@ interface AppConfigOptions {
   appName: string;
   testDir: string;
   baseURL: string;
+  /**
+   * Optional override of the default browser matrix. API-only apps pass a
+   * single browserless project so each test runs once instead of once per browser.
+   */
+  projects?: PlaywrightTestConfig['projects'];
 }
 
 /**
@@ -13,7 +18,7 @@ interface AppConfigOptions {
  * `playwright.<app>.config.ts`. Only `testDir`/`baseURL`/report output paths
  * vary per app - everything else here is app-agnostic infra.
  */
-export function createConfig({ appName, testDir, baseURL }: AppConfigOptions): PlaywrightTestConfig {
+export function createConfig({ appName, testDir, baseURL, projects }: AppConfigOptions): PlaywrightTestConfig {
   return defineConfig({
     testDir,
     timeout: 60000,
@@ -44,7 +49,7 @@ export function createConfig({ appName, testDir, baseURL }: AppConfigOptions): P
       video: 'retain-on-failure',
     },
 
-    projects: [
+    projects: projects ?? [
       { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
       { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
       { name: 'webkit', use: { ...devices['Desktop Safari'] } },

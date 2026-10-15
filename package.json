@@ -39,13 +39,20 @@
     "report:bookstore": "playwright show-report reports/bookstore/html-report",
     "allure:bookstore:generate": "allure generate reports/bookstore/allure-results --clean -o reports/bookstore/allure-report",
     "allure:bookstore:open": "allure open reports/bookstore/allure-report",
+    "test:jsonplaceholder": "playwright test --config=playwright.jsonplaceholder.config.ts",
+    "test:jsonplaceholder:smoke": "playwright test --config=playwright.jsonplaceholder.config.ts --grep @smoke",
+    "test:jsonplaceholder:regression": "playwright test --config=playwright.jsonplaceholder.config.ts --grep @regression",
+    "report:jsonplaceholder": "playwright show-report reports/jsonplaceholder/html-report",
+    "allure:jsonplaceholder:generate": "allure generate reports/jsonplaceholder/allure-results --clean -o reports/jsonplaceholder/allure-report",
+    "allure:jsonplaceholder:open": "allure open reports/jsonplaceholder/allure-report",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "generate:testdata:saucedemo": "ts-node src/apps/saucedemo/utils/generate-sample-data.ts",
     "generate:testdata:orangehrms": "ts-node src/apps/orangehrms/utils/generate-sample-data.ts",
-    "generate:testdata:bookstore": "ts-node src/apps/bookstore/utils/generate-sample-data.ts"
+    "generate:testdata:bookstore": "ts-node src/apps/bookstore/utils/generate-sample-data.ts",
+    "generate:testdata:jsonplaceholder": "ts-node src/apps/jsonplaceholder/utils/generate-sample-data.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

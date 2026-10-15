@@ -24,6 +24,7 @@ infer it from the Jira key prefix. Resolve `<app>` to its row below and read tha
 | saucedemo | `@src/apps/saucedemo/CLAUDE.md` |
 | orangehrms | `@src/apps/orangehrms/CLAUDE.md` |
 | bookstore | `@src/apps/bookstore/CLAUDE.md` |
+| jsonplaceholder | `@src/apps/jsonplaceholder/CLAUDE.md` |
 
 ## Workflow for each task
 
