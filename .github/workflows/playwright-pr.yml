@@ -13,28 +13,22 @@ jobs:
     name: BookStore Regression - Shard ${{ matrix.shard }}/4
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
-
       - name: Run BookStore regression shard
         run: >
           npm run test:bookstore:chrome --
@@ -43,7 +37,6 @@ jobs:
           --workers=2
         env:
           CI: true
-
       - name: Upload Playwright reports
         if: always()
         uses: actions/upload-artifact@v5
