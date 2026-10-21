@@ -10,10 +10,14 @@ permissions:
 
 jobs:
   playwright:
-    name: BookStore Regression - Chromium
+    name: BookStore Regression - Shard ${{ matrix.shard }}/4
     runs-on: ubuntu-latest
-
     timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
 
     steps:
       - name: Checkout repository
@@ -31,8 +35,12 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run BookStore regression
-        run: npm run test:bookstore:chrome -- --grep @regression
+      - name: Run BookStore regression shard
+        run: >
+          npm run test:bookstore:chrome --
+          --grep @regression
+          --shard=${{ matrix.shard }}/4
+          --workers=2
         env:
           CI: true
 
@@ -40,10 +48,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: bookstore-playwright-report
+          name: bookstore-playwright-report-shard-${{ matrix.shard }}
           path: |
             reports/bookstore/html-report/
             reports/bookstore/junit-results.xml
             reports/bookstore/allure-results/
             reports/bookstore/test-results/
+          if-no-files-found: ignore
           retention-days: 14
